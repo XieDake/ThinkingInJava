@@ -1,5 +1,7 @@
 package Chapter2_ADT;
 
+import org.omg.CORBA.Any;
+
 import java.awt.Dialog.ModalExclusionType;
 
 class MyLinkedList1<AnyType>implements Iterable<AnyType> {
@@ -75,6 +77,19 @@ class MyLinkedList1<AnyType>implements Iterable<AnyType> {
 	//iterator
 	public java.util.Iterator<AnyType> iterator(){
 		return new LinkedListIterator1() ;
+	}
+	//3.10:MyLinkedList的removeAll方法的实现：
+	public void removeAll(Iterable<?extends AnyType>items){
+		//items是MylinkedList的一个子集，将实现MyLinkedList的类去除掉子集中所包含的元素！
+		for (AnyType i:items
+			 ) {
+			while (this.iterator().hasNext()){
+				if ((this.iterator().next()==i)){
+					this.iterator().remove();
+				}
+			}
+		}
+
 	}
 	//private
 	//本程序中，十分重要的一个method（）。定位找的Node

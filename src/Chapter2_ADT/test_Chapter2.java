@@ -1,6 +1,15 @@
 package Chapter2_ADT;
 import Chapter2_ADT.MyLinkedList;
 import Chapter2_ADT.MyLinkedList.LinkedListIterator;
+import org.omg.CORBA.Any;
+import sun.plugin2.applet.context.NoopExecutionContext;
+
+import java.util.ArrayList;
+import java.util.prefs.NodeChangeEvent;
+
+import static sun.swing.MenuItemLayoutHelper.max;
+import static sun.swing.MenuItemLayoutHelper.useCheckAndArrow;
+
 //定义一个单链表：
 class SingleLinkedList<AnyType> implements Iterable<AnyType> {
 	//内部类定义基本单元：结点：
@@ -140,6 +149,116 @@ class SingleLinkedList<AnyType> implements Iterable<AnyType> {
 		
 	}
 	
+}
+//3.11：只有头节点的单链表！
+class DanLinkedList<AnyType>{
+    //定义基本单位：Node：
+    private class Node<AnyType>{
+        public AnyType data;
+        public Node<AnyType>next;
+        //构造方法：
+        public Node(AnyType data1,Node<AnyType> next1){
+            this.data=data1;
+            this.next=next1;
+        }
+    }
+    //定义数据成员：
+    private int theSize=1;//最起码，，至少有一个头节点！
+    private Node<AnyType> beginNode;//只保留头节点的引用！
+    //定义基本方法！
+    public int size(){
+        return theSize;
+    }
+    //构造方法：
+    public DanLinkedList(){
+        doClear();
+    }
+    public void doClear(){
+        theSize=1;
+        beginNode=new Node(null,null);
+    }
+    //clear
+    public void clear(){
+        doClear();
+    }
+    //print the items!
+    public void printList(){
+        //从头节点开始print！
+        Node<AnyType> temp=beginNode;
+        if (temp.next!=null){
+            System.out.println("the item of this list is : "+temp.data);
+            for (int i=0;i<size();i++){
+                temp=temp.next;
+                System.out.println("the item of this list is : "+temp.data);
+            }
+        }
+    }
+    //contains
+    public boolean contains(AnyType x){
+        //没办法！从头遍历!
+        boolean status=false;
+        Node<AnyType> temp=beginNode;
+        if (temp.data==x){
+            return true;
+        }else {
+            for (int i = 0; i < size(); i++) {
+                temp = temp.next;
+                if (temp.data==x){
+                    status=true;
+                    break;
+                }
+            }
+        }
+        return status;
+    }
+    //如果x不在链表中，则将其加入到链表中！
+    public void addNoExist(AnyType x){
+        //从头开始
+        Node<AnyType> temp=beginNode;
+        Node<AnyType> newNode=new Node<>(x,null);
+        if (!contains(x)){
+            if (temp.next==null){
+                temp.next=newNode;
+            }else {
+                for (int i = 0; i < size(); i++) {
+                    temp = temp.next;
+                    if (temp.next==null){
+                        temp.next=newNode;
+                    }
+                }
+            }
+        }else{
+            return;
+        }
+    }
+    //x在链表中，，并且删除他！
+    public void removeExist(AnyType x){
+        Node<AnyType>lastOne=null;
+        Node<AnyType> temp=beginNode;
+        //在头节点位置！
+        if (temp.data==x){
+            if (temp.next==null){
+                temp.data=null;
+            }else {
+                beginNode=temp.next;
+            }
+        }else {
+            for (int i=0;i<size();i++){
+                lastOne=temp;
+                temp=temp.next;
+                if (temp.data==x){
+                    if (temp.next==null){
+                        //尾结点处理：
+                        lastOne.next=null;
+                    }else {
+                        //不是尾节点！
+                        lastOne.next=temp.next;
+                    }
+                }
+            }
+        }
+        //在尾结点位置！
+    }
 }
 //双链表交换操作；
 class TwoMyLinkedList<AnyType> implements Iterable<AnyType> {
@@ -394,19 +513,191 @@ class TwoMyLinkedList<AnyType> implements Iterable<AnyType> {
 		
 		
 	}
-	
-	
-	
+}
+//3.4和3.5
+class JiaoBing<AnyType>{
+    ArrayList<AnyType>L1=new ArrayList<AnyType>();
+    ArrayList<AnyType>L2=new ArrayList<AnyType>();
+    //3.4 L1交L2
+    public ArrayList<AnyType>JiaoJi(){
+        ArrayList<AnyType>temp=new ArrayList<AnyType>();
+        for (int i=0;i<L1.size();i++){
+            if (L2.contains(L1.get(i))){
+                temp.add(L1.get(i));
+            }
+        }
+        for (AnyType item:temp
+                ) {
+            System.out.println("L1,l2 both have: "+item);
+        }
+        return temp;
+    }
+    //3.5:L1并L2
+    public ArrayList<AnyType>BingJi(){
+        ArrayList<AnyType>temp=new ArrayList<AnyType>();
+        for (int i=0;i<Math.max(L1.size(),L2.size());i++){
+            //L1:
+            if ((L1.get(i))!=null||(!temp.contains(L1.get(i)))){
+                temp.add(L1.get(i));
+            }
+            if ((L2.get(i))!=null||(!temp.contains(L2.get(i)))){
+                temp.add(L2.get(i));
+            }
+        }
+        for (AnyType item:temp
+             ) {
+            System.out.println("temp contains items of L1&L2: "+temp);
+        }
+        return temp;
+    }
+}
+//3.6:Josephus problem!
+class CycleLinkedList {
+    //基本组成单位；
+    private class Node {
+        private int data;
+        private Node next;
+
+        //Node构造方法，初始化
+        public Node(int data1, Node next1) {
+            this.data = data1;
+            this.next = next1;
+        }
+    }
+
+    //数据成员：只要头节点就ok！
+    private Node beginNode;
+    private int theSize = 0;
+
+    //构造方法初始化：
+    public CycleLinkedList() {
+        doClear();
+    }
+
+    public void doClear() {
+        theSize = 1;//头节点算一个结点！
+        beginNode = new Node(1, null);
+        beginNode.next = beginNode;//头节点指向自己，即做头节点也做尾结点!
+    }
+
+    //几个基本方法：
+    //clear
+    public void clear() {
+        doClear();
+    }
+
+    //size()
+    public int size() {
+        return theSize;
+    }
+
+    //getNode
+    public Node getNode(int id) {
+        return getNode(id, 0, size() - 1);
+    }
+
+    //add，插入链表；
+    //add第一种情形：在链表尾部添加结点；
+    public void add(int data) {
+        add(size() - 1, data);
+    }
+
+    //add第二种情形：在id位置后面加新节点！
+    public void add(int id, int data) {
+        addAfter(getNode(id), data);
+    }
+
+    public void remove(int id) {
+        //删除的是第id个Node，但是需要知道前一个Node的信息：
+        //id不可以是0，头节点不可删除！
+        if (id == 0) {
+            throw new IllegalStateException();
+        }
+        Node nodeBeforeRemoved = getNode(id - 1);
+        Node nodeRemoved = getNode(id);
+        nodeBeforeRemoved.next = nodeRemoved.next;
+        theSize -= 1;
+    }
+    //remove node!
+    public void remove(Node p){
+        Node temp=beginNode;
+        Node lastOne=temp;
+        //第一个节点可以删除！
+        if (p==beginNode){
+            lastOne=getNode(size()-1);//最后一个结点！
+        }else {
+            for (int i = 0; i < size(); i++) {
+                if (temp != p) {
+                    lastOne = temp;
+                    temp = temp.next;
+                }//lastOne存的是p前一个节点！
+            }
+        }
+        //remove!操作：
+        lastOne.next=p.next;
+    }
+
+    //add第二种情形：在链表的中间指定位置插入结点；
+    private void addAfter(Node p, int data) {
+        Node newNode = new Node(data, null);
+        newNode.next = p.next;
+        p.next = newNode;
+        theSize += 1;
+    }
+
+    private Node getNode(int id, int low, int high) {
+        Node p;
+        if ((id < low) || (id > high)) {
+            throw new IndexOutOfBoundsException();
+        }
+        //go on!
+        //不分前后半区！
+        p = beginNode;
+        for (int i = 0; i < id; i++) {
+            p = p.next;
+        }
+        return p;
+    }
+
+    //Josephus problems!
+    class JosephusProblem {
+        private int m = 0;//默认游戏进行m=0次！
+        private int n = 1;//至少有一个人！
+        private CycleLinkedList queue = new CycleLinkedList();
+        public JosephusProblem(int m, int n) {
+            this.m = m;
+            this.n = n;
+            //使用循环链表来组成队列！
+            //第一个人里面的data默认为1；
+            for (int i = 2; i < n + 1; i++) {
+                queue.add(i);
+            }
+        }
+
+        public void kill() {
+            //因为是最后一人获胜，并且每一次都只kill一个人，，，所以可以知道进行了n-1次kill游戏！
+            //首次游戏从第一个人开始！
+            Node people;
+            people=queue.beginNode;
+            for (int i = 1; i < this.n; i++) {
+                //每一次kill，都要传m次炸弹！
+                for (int j = 0; j < this.m; j++) {
+                    people=people.next;
+                }
+                //kill this people!
+                //死之前，有台词！
+                System.out.println("my numberID is: "+people.data);
+                queue.remove(people);
+                //下一次从kill的人的后一个人开始！
+                people=people.next;
+            }
+        }
+    }
 }
 
-
-
-
 public class test_Chapter2 {
-
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stud
 
 	}
 

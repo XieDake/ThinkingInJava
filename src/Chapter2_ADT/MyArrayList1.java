@@ -94,6 +94,13 @@ class MyArrayList1 <AnyType> implements Iterable<AnyType>  {
 		theSize--;
 		return itemRemoved;
 	}
+	//3.9 MyArrayList的addAll的实现：
+	public void addAll(Iterable<? extends AnyType>items){
+		for (AnyType i:items
+			 ) {
+			add(size(),i);
+		}
+	}
 	//iterator
 	//由于MyArrayList实现了Iterable接口所以，得实现iterator（）方法
 	//但是iterato（）方法有固定的格式：规定返回一个Iterator接口类型的对象
